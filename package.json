@@ -1,0 +1,22 @@
+{
+  "name": "browser-hub",
+  "version": "0.1.0",
+  "private": true,
+  "description": "独立的远程浏览器与 Agent 登录会话工具",
+  "type": "module",
+  "scripts": {
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "node tests/cache-profile.mjs && node tests/test-tmp-cleanup.mjs && node tests/cdp-connection.mjs && node tests/doctor-profile.mjs && node tests/tunnel-health.mjs && node tests/site-readers.mjs && node tests/browser-startup.mjs && node tests/proxy-wrapper.mjs && node tests/security.mjs",
+    "test:integration": "node tests/integration.mjs",
+    "test:security": "node tests/security.mjs",
+    "test:live": "node tests/integration.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "turndown": "7.2.0",
+    "turndown-plugin-gfm": "1.0.2",
+    "ws": "8.22.0"
+  }
+}

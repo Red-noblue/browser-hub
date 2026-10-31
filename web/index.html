@@ -1,0 +1,18 @@
+<!doctype html>
+<!-- 中文说明：轻量远程浏览器工作台；页面和键鼠在服务器执行，客户端只接收画面。 -->
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f1f4f7"><title>远程浏览器工作台</title><link rel="stylesheet" href="/style.css"></head>
+<body>
+<div id="app-shell">
+  <header><strong>远程浏览器工作台</strong><span id="profile"></span></header>
+  <form id="navigation"><select id="tabs" aria-label="标签页"></select><input id="address" aria-label="网址" placeholder="网站地址，例如 bilibili.com" required><button>前往</button></form>
+  <p id="notice" role="status">正在连接。请使用服务启动时给出的完整接管链接。</p>
+  <p id="login-status" class="login-status" role="status" aria-live="polite">登录状态：检查中</p>
+  <div class="view-controls"><label class="desktop-only">画面 <select id="viewport"><option value="1280,800">桌面宽度</option><option value="390,844">手机竖屏</option><option value="844,390">手机横屏</option><option value="800,1000">大号竖屏</option></select></label><button class="mobile-only" type="button" id="toggle-orientation" aria-label="切换浏览器画面方向">切换横屏</button><label class="desktop-only">触屏 <select id="touch-mode"><option value="scroll">滑动滚动</option><option value="drag">拖动控件</option></select></label></div>
+  <nav id="quick-sites" class="quick-sites" aria-label="登录网站"><span>登录网站：</span><button type="button" id="home-xhs">小红书</button><button type="button" id="home-zhihu">知乎</button><button type="button" id="home-bilibili">B站</button><button type="button" id="home-weibo">微博</button><button type="button" id="home-douyin">抖音</button></nav>
+  <main><canvas id="screen" width="1280" height="800" tabindex="0" aria-label="服务器浏览器画面，点击后可用键盘操作"></canvas></main>
+  <aside id="page-scroll" class="mobile-only page-scroll" aria-label="远程页面滚动导航"><button type="button" id="scroll-up" aria-label="向上滚动">▲</button><input id="scroll-track" class="scroll-track" type="range" min="-100" max="100" step="1" value="0" aria-label="拖动滚动远程页面"><button type="button" id="scroll-down" aria-label="向下滚动">▼</button></aside>
+  <form id="text-form"><input id="text" type="password" autocomplete="off" aria-label="输入到服务器网页" placeholder="中文输入、粘贴或密码：先点击网页输入框，在这里输入并发送"><button>输入到网页</button><button id="enter" type="button">发送回车</button></form>
+  <footer>浏览器和登录资料保留在服务器。登录和验证由你操作，CLI/MCP 可直接在后台读取和搜索。画面转发不包含声音、摄像头或完整桌面。</footer>
+</div>
+  <script src="/app.js"></script>
+</body></html>

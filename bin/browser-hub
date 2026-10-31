@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# 中文说明：复用共享 Node；可通过项目隧道启动独立的远程浏览器工具。
+set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+# 中文说明：固定使用项目共享 Node；代理分支也直接执行 CLI，避免递归调用本包装器导致 macOS Chromium 资源初始化异常。
+NODE_BIN="${BROWSER_HUB_NODE_BIN:-$PROJECT_ROOT/.venvs/0node/bin/node}"
+[[ -x "$NODE_BIN" ]] || NODE_BIN="$(command -v node)"
+if [[ "${1:-}" == "--proxy" ]]; then
+  shift
+  # 中文说明：直接在当前 shell 注入代理并启动 Node；macOS Chromium 在 with-proxy.sh 的子 shell 链路下会偶发 ICU/GPU 初始化失败。
+  source "$PROJECT_ROOT/tools/proxy-tunnel/bin/common.sh"
+  proxy_backend="$(current_backend)"
+  proxy_started_here=0
+  if ! is_running; then
+    "$PROJECT_ROOT/tools/proxy-tunnel/bin/start.sh" >/dev/null
+    proxy_started_here=1
+    reload_persisted_mihomo_ports
+  fi
+  proxy_url="$(proxy_url_for_backend "$proxy_backend")"
+  export http_proxy="$proxy_url" https_proxy="$proxy_url" HTTP_PROXY="$proxy_url" HTTPS_PROXY="$proxy_url"
+  export all_proxy="$proxy_url" ALL_PROXY="$proxy_url" no_proxy="${no_proxy:-127.0.0.1,localhost}" NO_PROXY="${NO_PROXY:-127.0.0.1,localhost}"
+  export BROWSER_HUB_PROXY="$proxy_url" BROWSER_HUB_TUNNEL_PROXY=1
+  cleanup_proxy() {
+    if [[ "$proxy_started_here" -eq 1 ]]; then "$PROJECT_ROOT/tools/proxy-tunnel/bin/stop.sh" >/dev/null 2>&1 || true; fi
+  }
+  trap cleanup_proxy EXIT INT TERM
+  "$NODE_BIN" "$SCRIPT_DIR/../src/cli.mjs" "$@"
+  exit_code=$?
+  cleanup_proxy
+  trap - EXIT INT TERM
+  exit "$exit_code"
+fi
+exec "$NODE_BIN" "$SCRIPT_DIR/../src/cli.mjs" "$@"

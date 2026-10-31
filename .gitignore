@@ -1,0 +1,7 @@
+# 中文说明：运行输出、浏览器 Profile、下载文件和测试产物不属于源码发布包。
+run/
+data/
+evidence/*
+!evidence/public/
+!evidence/public/**
+node_modules/
